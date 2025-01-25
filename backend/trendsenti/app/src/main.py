@@ -3,6 +3,7 @@ import requests
 from typing import Optional
 from bs4 import BeautifulSoup
 import urllib.parse
+from .agent import get_sentiment
 
 app = FastAPI(
     title="Google Search API",
@@ -42,7 +43,7 @@ async def sentiments_search(
     
     try:
         # Extract search results
-        results = []
+        results = get_sentiment(search_keywords, search_sources)
         # TODO call sentiment analysis API or module
         return {
             "keywords": search_keywords,
