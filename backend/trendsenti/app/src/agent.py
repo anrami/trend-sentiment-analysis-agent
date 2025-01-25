@@ -18,7 +18,6 @@ tools = [search]
 agent_executor = create_react_agent(model, tools, checkpointer=memory)
 
 def get_sentiment(keywords, sources):
-    res = []
     config = {"configurable": {"thread_id": "abc123"}}
     for chunk in agent_executor.stream(
         {"messages": [HumanMessage(content=f"You are a guru on sentimate analysis, can you look on these news sources: {sources} and report to me one short sentence of the the overall sentiment and you must give me a score from from 0 (Extremely Negative sentiment) - 100 (Extremely Positive sentiment) for {keywords}, is it positive or negative and to what percentage?")]}, config
