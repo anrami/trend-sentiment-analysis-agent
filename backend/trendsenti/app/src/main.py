@@ -9,26 +9,38 @@ app = FastAPI(
     description="A simple FastAPI endpoint to perform Google searches"
 )
 
-@app.get("/search")
-async def search_google(
-    query: Optional[str] = Query(
+@app.get("/sentiments")
+async def sentiments_search(
+    keywords: Optional[str] = Query(
         default=None, 
-        description="Search query to search on Google"
+        description="Comma-separated keywords to search"
+    ),
+    sources: Optional[str] = Query(
+        default=None, 
+        description="Comma-separated sources to search sentiment from"
     )
 ):
     """
-    Perform a Google search and return top search results.
+    Perform advanced search with keywords and source filtering.
     
-    - **query**: Search term to look up on Google
-    - Returns a dictionary of search results
+    - **keywords**: Search terms
+    - **sources**: Optional sources to prioritize
+    - Returns combined search results
     """
-    if not query:
-        return {"error": "No query provided"}
+    if not keywords:
+        return {"error": "No keywords provided"}
     
-    # Encode the query for URL
-    encoded_query = urllib.parse.quote(query)
+    if not sources:
+        sources = {"error": "No sources provided"}
     
-    # Set up headers to mimic a browser request
+    # Prepare search terms
+    search_keywords = [term.strip() for term in keywords.split(',')]
+    search_sources = [source.strip() for source in (sources or '').split(',') if source.strip()]
+
+    print(f"Searching for keywords: {search_keywords}")
+    print(f"Searching in sources: {search_sources}")
+    
+    # Headers to mimic browser request
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
     }
@@ -57,7 +69,8 @@ async def search_google(
                 })
         
         return {
-            "query": query,
+            "keywords": search_keywords,
+            "sources": search_sources,
             "results": results
         }
     
