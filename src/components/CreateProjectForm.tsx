@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const DATA_SOURCE_OPTIONS = [
-  'Reddit',
-  'Twitter',
-  'News Articles',
-  'Blog Posts'
+  'Reuters',
+  'Bloomberg',
+  'CNBC',
+  'Wall Street Journal'
 ];
 
 export default function CreateProjectForm() {
@@ -17,13 +17,30 @@ export default function CreateProjectForm() {
     dataSource: '',
     description: ''
   });
+  const [sentimentResult, setSentimentResult] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setSentimentResult(null);
     
-    // TODO: Implement API call to create project
-    // For now, we'll just redirect back to home
-    router.push('/');
+    try {
+      const response = await fetch(`http://localhost:8000/sentiments?keywords=${encodeURIComponent(formData.trend)}&sources=${encodeURIComponent(formData.dataSource)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch sentiment analysis');
+      }
+
+      const data = await response.json();
+      setSentimentResult(data.results);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -56,39 +73,44 @@ export default function CreateProjectForm() {
           className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-gray-200 focus:border-gray-400"
           value={formData.dataSource}
           onChange={(e) => setFormData(prev => ({ ...prev, dataSource: e.target.value }))}
-          placeholder="Enter a keyword or data source"
+          placeholder="Enter data sources (e.g., Reuters, Bloomberg)"
         />
       </div>
 
       <div className="mb-6">
         <label htmlFor="description" className="block text-sm font-medium text-gray-900 mb-2">
-          Description (optional)
+          Project Description (Optional)
         </label>
         <textarea
           id="description"
-          rows={3}
           className="w-full p-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:ring-2 focus:ring-gray-200 focus:border-gray-400"
           value={formData.description}
           onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-          placeholder="Add a description for your project"
+          placeholder="Enter a description for your project"
+          rows={3}
         />
       </div>
 
-      <div className="flex justify-end gap-4">
-        <button
-          type="button"
-          onClick={() => router.push('/')}
-          className="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 transition-colors"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-white border border-gray-300 text-gray-900 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          Create Project
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full bg-gray-900 text-white py-2 px-4 rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50"
+      >
+        {isLoading ? 'Analyzing...' : 'Analyze Sentiment'}
+      </button>
+
+      {error && (
+        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md text-red-600">
+          {error}
+        </div>
+      )}
+
+      {sentimentResult && (
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
+          <h2 className="text-lg font-semibold mb-2">Analysis Results</h2>
+          <p className="text-gray-800">{sentimentResult}</p>
+        </div>
+      )}
     </form>
   );
 }
