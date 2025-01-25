@@ -21,7 +21,12 @@ cd trendsenti
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-### 3. Install Dependencies
+### 3. Add a package or depenency to Poetry
+```bash
+poetry add <package_name>
+```
+
+### 4. Install Dependencies
 ```bash
 make install
 ```
