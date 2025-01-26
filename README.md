@@ -1,5 +1,4 @@
-[![Watch the Demo]([https://td6vw10lmp.ufs.sh/f/tUeDRE4SLPx8mwF6DGladP6Oqs9AVMfbIGowSiB5l0ZXLF7T](https://td6vw10lmp.ufs.sh/f/tUeDRE4SLPx8mwF6DGladP6Oqs9AVMfbIGowSiB5l0ZXLF7T))
-[Watch Demo Video](https://td6vw10lmp.ufs.sh/f/tUeDRE4SLPx8sH1sG2931RPaNsLtW0mnYgwQvziqCbJjMDu7)
+[Watch Demo Video here](https://td6vw10lmp.ufs.sh/f/tUeDRE4SLPx8sH1sG2931RPaNsLtW0mnYgwQvziqCbJjMDu7)
 
 # Trend Sentiment Analysis Agent
 
